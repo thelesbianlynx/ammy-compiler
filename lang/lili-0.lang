@@ -1,0 +1,701 @@
+
+|| * Todo:
+||
+||  > Incomplete:
+||      - pointer-to-struct field access operator
+||
+||  > Missing:
+||      - equals defintion (datatype)
+||      - operator overloading (datatype)
+||      - destructor definition (datatype)
+||      - raise/resume
+
+
+@id id
+@int integer
+@byte byte_integer
+@short short_integer
+@long long_integer
+@float real
+@double double_real
+@str string
+@chr character
+
+
+@key not cmpl copy len mod equals and or xor band bor bxor
+
+@key package get const fn typename struct datatype cons decons implicit operator abstract final instanceof
+
+@key common private protected
+
+@key lambda let var in when where
+
+@key if then else select case match for by
+
+@key auto new delete
+
+@key try raise resume do while break continue return
+
+@key int char short long unsigned float double boolean void ref
+
+@key true false null nullptr default this super
+
+@key continue break return
+
+
+@op + - * /
+
+@op == < <= > >= !=
+
+@op = += -= *= /= &= ++ -- ** //
+
+@op ( ) [ ] { } . , : ;
+
+@op -> << >> >>> ~ ^ % # ? !
+
+
+@eof $
+
+
+@var Program
+
+@var Dotname IDList
+
+@var Name NameList Declaration DeclarationList
+
+@var Initializer InitializerList ArgsList
+
+@var Type TypeList
+
+@var Type0 Type1 Type2
+
+@var PolyType TypePattern TypePatternList
+
+@var AL Definition DefinitionList
+
+@var SuperType DatatypeDefinition DatatypeDefinitionList PatternPrefix
+
+@var Field FieldList FieldDeclaration FieldDeclarationList
+
+@var OperatorName OperatorPattern OperatorSign
+
+@var Body Guard GuardList
+
+@var Expr ExprList
+
+@var Expr0 Expr1 Expr2 Expr3 Expr4 Expr5 Expr6 Expr7 Expr8 Expr9
+
+@var Case CaseList
+
+@var Pattern BasePattern BasePatternList SubPatternList
+
+@var Iterator IteratorList IteratorGuard
+
+@var Statement Block CaseStatement CaseBlock
+
+Program :: DefinitionList $
+
+Dotname :: id
+Dotname :: id . Dotname
+
+IDList :: id
+IDList :: id IDList
+
+Name :: .
+Name :: id
+Name :: . [ Type ]
+Name :: id [ Type ]
+
+NameList :: Name
+NameList :: Name NameList
+
+DeclarationList :: Declaration
+DeclarationList :: Declaration , DeclarationList
+
+Declaration :: NameList = Expr
+Declaration :: fn id BasePatternList = Expr
+
+InitializerList :: Initializer
+InitializerList :: Initializer InitializerList
+
+Initializer :: ( let DeclarationList )
+Initializer :: ( id = Expr )
+Initializer :: ( id ArgsList )
+Initializer :: ( super id ArgsList )
+|Initializer :: ( id : Expr )
+|Initializer :: ( id : Expr , ExprList )
+|Initializer :: ( super id : Expr )
+|Initializer :: ( super id : Expr , ExprList )
+
+ArgsList :: Expr0
+ArgsList :: Expr0 ArgsList
+
+Type0 :: int
+Type0 :: char
+Type0 :: short
+Type0 :: long
+Type0 :: unsigned int
+Type0 :: unsigned char
+Type0 :: unsigned short
+Type0 :: unsigned long
+Type0 :: float
+Type0 :: double
+Type0 :: boolean
+Type0 :: void
+
+Type0 :: Type0 %
+Type0 :: Type0 const %
+
+Type0 :: Type0 ~
+Type0 :: Type0 const ~
+
+Type0 :: Dotname
+Type0 :: Dotname ref
+
+Type0 :: ( )
+Type0 :: ( Type )
+Type0 :: ( Type , TypeList )
+
+Type0 :: ( struct NameList )
+
+TypeList :: Type
+TypeList :: Type , TypeList
+
+Type1 :: Type0
+Type1 :: Type1 Type0
+
+Type2 :: Type1
+Type2 :: Type1 -> Type2
+
+Type :: Type2
+
+PolyType :: Type
+PolyType :: { TypePatternList } Type
+
+TypePattern :: id
+TypePattern :: id [ Dotname ]
+
+TypePattern :: ( TypePatternList )
+
+TypePatternList :: TypePattern
+TypePatternList :: TypePattern TypePatternList
+
+DefinitionList :: Definition
+DefinitionList :: Definition DefinitionList
+
+AL ::
+AL :: private
+AL :: common
+AL :: protected
+AL :: common protected
+
+Definition :: package Dotname ;
+
+Definition :: package Dotname { DefinitionList }
+Definition :: common package Dotname { DefinitionList }
+Definition :: private package Dotname { DefinitionList }
+
+Definition :: get Dotname ;
+Definition :: get Dotname IDList ;
+Definition :: get Dotname * ;
+
+Definition :: [ AL id : PolyType ]
+
+Definition :: AL id = Expr ;
+Definition :: AL id [ Type ] = Expr ;
+
+Definition :: AL const id = Expr ;
+Definition :: AL const id [ Type ] = Expr ;
+
+Definition :: AL fn id BasePatternList Body ;
+Definition :: AL fn [ Type ] id BasePatternList Body ;
+
+Definition :: AL fn id BasePatternList { Block }
+Definition :: AL fn [ Type ] id BasePatternList { Block }
+
+Definition :: AL typename id : Type ;
+Definition :: AL typename id TypePatternList : Type ;
+
+Definition :: AL datatype id SuperType { DatatypeDefinitionList }
+Definition :: AL datatype id TypePatternList SuperType { DatatypeDefinitionList }
+
+Definition :: AL abstract datatype id SuperType { DatatypeDefinitionList }
+Definition :: AL abstract datatype id TypePatternList SuperType { DatatypeDefinitionList }
+
+Definition :: AL final datatype id SuperType { DatatypeDefinitionList }
+Definition :: AL final datatype id TypePatternList SuperType { DatatypeDefinitionList }
+
+Definition :: ;
+
+SuperType ::
+SuperType :: : Type
+
+FieldList ::
+FieldList :: Field FieldList
+
+Field :: let FieldDeclarationList ;
+Field :: var FieldDeclarationList ;
+
+FieldDeclarationList :: FieldDeclaration
+FieldDeclarationList :: FieldDeclaration , FieldDeclarationList
+
+FieldDeclaration :: NameList
+FieldDeclaration :: NameList = Expr
+
+DatatypeDefinitionList ::
+DatatypeDefinitionList :: DatatypeDefinition DatatypeDefinitionList
+
+DatatypeDefinition :: AL > id ;
+DatatypeDefinition :: AL > id : Type ;
+DatatypeDefinition :: AL > id : Type , TypeList ;
+DatatypeDefinition :: AL > id { FieldList }
+
+DatatypeDefinition :: Field
+
+DatatypeDefinition :: [ AL cons id : Type ]
+DatatypeDefinition :: [ AL cons id : Type , TypeList ]
+
+DatatypeDefinition :: [ AL cons id > id : Type ]
+DatatypeDefinition :: [ AL cons id > id : Type , TypeList ]
+
+DatatypeDefinition :: [ AL decons id : Type ]
+
+DatatypeDefinition :: [ AL id : PolyType ]
+DatatypeDefinition :: [ AL implicit : PolyType ]
+DatatypeDefinition :: [ AL OperatorSign : PolyType ]
+
+DatatypeDefinition :: AL cons id BasePatternList : InitializerList ;
+DatatypeDefinition :: AL cons id BasePatternList : InitializerList { Block }
+DatatypeDefinition :: AL cons id BasePatternList { Block }
+
+DatatypeDefinition :: AL cons id > id BasePatternList : InitializerList ;
+DatatypeDefinition :: AL cons id > id BasePatternList : InitializerList { Block }
+
+DatatypeDefinition :: AL copy id BasePatternList : InitializerList ;
+DatatypeDefinition :: AL copy id BasePatternList : InitializerList { Block }
+
+DatatypeDefinition :: AL decons id Body ;
+DatatypeDefinition :: AL decons id [ Type ] Body ;
+
+DatatypeDefinition :: AL decons ( id ) Body ;
+DatatypeDefinition :: AL decons ( id ) [ Type ] Body ;
+
+DatatypeDefinition :: AL decons ( id BasePatternList ) Body ;
+DatatypeDefinition :: AL decons ( id BasePatternList ) [ Type ] Body ;
+
+DatatypeDefinition :: AL PatternPrefix id = Expr ;
+DatatypeDefinition :: AL PatternPrefix id [ Type ] = Expr ;
+
+DatatypeDefinition :: AL fn PatternPrefix id BasePatternList Body ;
+DatatypeDefinition :: AL fn [ Type ] PatternPrefix id BasePatternList Body ;
+
+DatatypeDefinition :: AL fn PatternPrefix id BasePatternList { Block }
+DatatypeDefinition :: AL fn [ Type ] PatternPrefix id BasePatternList { Block }
+
+DatatypeDefinition :: AL fn PatternPrefix implicit BasePatternList Body ;
+DatatypeDefinition :: AL fn [ Type ] PatternPrefix implicit BasePatternList Body ;
+
+DatatypeDefinition :: AL fn PatternPrefix implicit BasePatternList { Block }
+DatatypeDefinition :: AL fn [ Type ] PatternPrefix implicit BasePatternList { Block }
+
+DatatypeDefinition :: AL fn PatternPrefix equals BasePatternList Body ;
+DatatypeDefinition :: AL fn [ Type ] PatternPrefix equals BasePatternList Body ;
+
+DatatypeDefinition :: AL fn PatternPrefix equals BasePatternList { Block }
+DatatypeDefinition :: AL fn [ Type ] PatternPrefix equals BasePatternList { Block }
+
+DatatypeDefinition :: AL fn OperatorName Body ;
+DatatypeDefinition :: AL fn [ Type ] OperatorName Body ;
+
+DatatypeDefinition :: AL fn OperatorName { Block }
+DatatypeDefinition :: AL fn [ Type ] OperatorName { Block }
+
+DatatypeDefinition :: AL abstract PatternPrefix id = Expr ;
+DatatypeDefinition :: AL abstract PatternPrefix id [ Type ] = Expr ;
+
+DatatypeDefinition :: AL abstract fn PatternPrefix id BasePatternList Body ;
+DatatypeDefinition :: AL abstract fn [ Type ] PatternPrefix id BasePatternList Body ;
+
+DatatypeDefinition :: AL abstract fn PatternPrefix id BasePatternList { Block }
+DatatypeDefinition :: AL abstract fn [ Type ] PatternPrefix id BasePatternList { Block }
+
+DatatypeDefinition :: AL abstract fn PatternPrefix implicit BasePatternList Body ;
+DatatypeDefinition :: AL abstract fn [ Type ] PatternPrefix implicit BasePatternList Body ;
+
+DatatypeDefinition :: AL abstract fn PatternPrefix implicit BasePatternList { Block }
+DatatypeDefinition :: AL abstract fn [ Type ] PatternPrefix implicit BasePatternList { Block }
+
+DatatypeDefinition :: AL abstract fn PatternPrefix equals BasePatternList Body ;
+DatatypeDefinition :: AL abstract fn [ Type ] PatternPrefix equals BasePatternList Body ;
+
+DatatypeDefinition :: AL abstract fn PatternPrefix equals BasePatternList { Block }
+DatatypeDefinition :: AL abstract fn [ Type ] PatternPrefix equals BasePatternList { Block }
+
+DatatypeDefinition :: AL abstract fn OperatorName Body ;
+DatatypeDefinition :: AL abstract fn [ Type ] OperatorName Body ;
+
+DatatypeDefinition :: AL abstract fn OperatorName { Block }
+DatatypeDefinition :: AL abstract fn [ Type ] OperatorName { Block }
+
+DatatypeDefinition :: AL final PatternPrefix id = Expr ;
+DatatypeDefinition :: AL final PatternPrefix id [ Type ] = Expr ;
+
+DatatypeDefinition :: AL final fn PatternPrefix id BasePatternList Body ;
+DatatypeDefinition :: AL final fn [ Type ] PatternPrefix id BasePatternList Body ;
+
+DatatypeDefinition :: AL final fn PatternPrefix id BasePatternList { Block }
+DatatypeDefinition :: AL final fn [ Type ] PatternPrefix id BasePatternList { Block }
+
+DatatypeDefinition :: AL final fn PatternPrefix implicit BasePatternList Body ;
+DatatypeDefinition :: AL final fn [ Type ] PatternPrefix implicit BasePatternList Body ;
+
+DatatypeDefinition :: AL final fn PatternPrefix implicit BasePatternList { Block }
+DatatypeDefinition :: AL final fn [ Type ] PatternPrefix implicit BasePatternList { Block }
+
+DatatypeDefinition :: AL final fn PatternPrefix equals BasePatternList Body ;
+DatatypeDefinition :: AL final fn [ Type ] PatternPrefix equals BasePatternList Body ;
+
+DatatypeDefinition :: AL final fn PatternPrefix equals BasePatternList { Block }
+DatatypeDefinition :: AL final fn [ Type ] PatternPrefix equals BasePatternList { Block }
+
+DatatypeDefinition :: AL final fn OperatorName Body ;
+DatatypeDefinition :: AL final fn [ Type ] OperatorName Body ;
+
+DatatypeDefinition :: AL final fn OperatorName { Block }
+DatatypeDefinition :: AL final fn [ Type ] OperatorName { Block }
+
+DatatypeDefinition :: ;
+
+PatternPrefix ::
+PatternPrefix :: ( id )
+PatternPrefix :: ( id BasePatternList )
+
+OperatorPattern :: this
+OperatorPattern :: BasePattern
+
+OperatorName :: operator - OperatorPattern
+OperatorName :: operator % OperatorPattern
+OperatorName :: operator not OperatorPattern
+OperatorName :: operator cmpl OperatorPattern
+OperatorName :: operator len OperatorPattern
+
+OperatorName :: operator OperatorPattern ~ OperatorPattern
+OperatorName :: operator OperatorPattern + OperatorPattern
+OperatorName :: operator OperatorPattern - OperatorPattern
+OperatorName :: operator OperatorPattern * OperatorPattern
+OperatorName :: operator OperatorPattern / OperatorPattern
+OperatorName :: operator OperatorPattern -- OperatorPattern
+OperatorName :: operator OperatorPattern // OperatorPattern
+OperatorName :: operator OperatorPattern mod OperatorPattern
+OperatorName :: operator OperatorPattern == OperatorPattern
+OperatorName :: operator OperatorPattern != OperatorPattern
+OperatorName :: operator OperatorPattern < OperatorPattern
+OperatorName :: operator OperatorPattern > OperatorPattern
+OperatorName :: operator OperatorPattern <= OperatorPattern
+OperatorName :: operator OperatorPattern >= OperatorPattern
+OperatorName :: operator OperatorPattern >> OperatorPattern
+OperatorName :: operator OperatorPattern << OperatorPattern
+OperatorName :: operator OperatorPattern >>> OperatorPattern
+OperatorName :: operator OperatorPattern and OperatorPattern
+OperatorName :: operator OperatorPattern or OperatorPattern
+OperatorName :: operator OperatorPattern band OperatorPattern
+OperatorName :: operator OperatorPattern bor OperatorPattern
+OperatorName :: operator OperatorPattern bxor OperatorPattern
+
+OperatorSign :: operator - Type0
+OperatorSign :: operator % Type0
+OperatorSign :: operator not Type0
+OperatorSign :: operator cmpl Type0
+OperatorSign :: operator len Type0
+
+OperatorSign :: operator Type0 ~ Type0
+OperatorSign :: operator Type0 + Type0
+OperatorSign :: operator Type0 - Type0
+OperatorSign :: operator Type0 * Type0
+OperatorSign :: operator Type0 / Type0
+OperatorSign :: operator Type0 -- Type0
+OperatorSign :: operator Type0 // Type0
+OperatorSign :: operator Type0 mod Type0
+OperatorSign :: operator Type0 == Type0
+OperatorSign :: operator Type0 != Type0
+OperatorSign :: operator Type0 < Type0
+OperatorSign :: operator Type0 > Type0
+OperatorSign :: operator Type0 <= Type0
+OperatorSign :: operator Type0 >= Type0
+OperatorSign :: operator Type0 >> Type0
+OperatorSign :: operator Type0 << Type0
+OperatorSign :: operator Type0 >>> Type0
+OperatorSign :: operator Type0 and Type0
+OperatorSign :: operator Type0 or Type0
+OperatorSign :: operator Type0 band Type0
+OperatorSign :: operator Type0 bor Type0
+OperatorSign :: operator Type0 bxor Type0
+
+Body :: = Expr
+Body :: = Expr where DeclarationList
+
+Body :: GuardList
+Body :: GuardList where DeclarationList
+
+GuardList :: Guard
+GuardList :: Guard GuardList
+
+Guard :: when Expr -> Expr
+Guard :: else Expr
+
+Expr0 :: Dotname
+
+Expr0 :: integer
+Expr0 :: real
+Expr0 :: string
+Expr0 :: character
+
+Expr0 :: true
+Expr0 :: false
+
+Expr0 :: cons
+Expr0 :: null
+Expr0 :: nullptr
+
+Expr0 :: this
+Expr0 :: super
+
+Expr0 :: default
+
+Expr0 :: Expr0 : id
+Expr0 :: Expr0 # id
+Expr0 :: Expr0 # integer
+|Expr0 :: Expr0 -> id
+|Expr0 :: Expr0 -> integer
+Expr0 :: Expr0 [ Type ]
+
+Expr0 :: ( )
+Expr0 :: ( Expr )
+Expr0 :: ( Expr , ExprList )
+
+ExprList :: Expr
+ExprList :: Expr , ExprList
+
+Expr0 :: auto ( )
+Expr0 :: auto ( Type )
+Expr0 :: auto ( Type * integer )
+Expr0 :: auto ( * integer )
+
+Expr0 :: new ( )
+Expr0 :: new ( Type )
+Expr0 :: new ( Type * integer )
+Expr0 :: new ( * integer )
+
+Expr1 :: Expr0
+Expr1 :: Expr1 Expr0
+
+Expr2 :: Expr1
+Expr2 :: - Expr2
+Expr2 :: % Expr2
+Expr2 :: not Expr2
+Expr2 :: cmpl Expr2
+Expr2 :: len Expr2
+Expr2 :: copy Expr2
+
+Expr3 :: Expr2
+Expr3 :: Expr3 ~ Expr2
+
+Expr4 :: Expr3
+Expr4 :: Expr4 * Expr3
+Expr4 :: Expr4 / Expr3
+Expr4 :: Expr4 ** Expr3
+Expr4 :: Expr4 // Expr3
+Expr4 :: Expr4 mod Expr3
+
+Expr5 :: Expr4
+Expr5 :: Expr5 + Expr4
+Expr5 :: Expr5 - Expr4
+Expr5 :: Expr5 ++ Expr4
+Expr5 :: Expr5 -- Expr4
+
+Expr6 :: Expr5
+Expr6 :: Expr6 << Expr5
+Expr6 :: Expr6 >> Expr5
+Expr6 :: Expr6 >>> Expr5
+
+Expr7 :: Expr6
+Expr7 :: Expr7 band Expr6
+Expr7 :: Expr7 bor Expr6
+Expr7 :: Expr7 bxor Expr6
+
+Expr8 :: Expr7
+Expr8 :: Expr8 == Expr7
+Expr8 :: Expr8 != Expr7
+Expr8 :: Expr8 < Expr7
+Expr8 :: Expr8 > Expr7
+Expr8 :: Expr8 <= Expr7
+Expr8 :: Expr8 >= Expr7
+Expr8 :: Expr8 equals Expr7
+
+Expr9 :: Expr8
+Expr9 :: Expr9 or Expr8
+Expr9 :: Expr9 and Expr8
+
+Expr :: Expr9
+
+Expr :: if Expr then Expr else Expr
+
+Expr :: select Expr { CaseList }
+
+Expr :: lambda NameList -> Expr
+
+Expr :: fn id BasePatternList = Expr
+Expr :: fn [ Type ] id BasePatternList = Expr
+
+Expr :: let DeclarationList in Expr
+
+Expr :: let ( id ) DeclarationList in Expr
+Expr :: let [ id ] DeclarationList in Expr
+
+Expr :: for IteratorList in Expr
+
+Expr :: for ( id = Expr ) IteratorList in Expr
+Expr :: for [ id = Expr ] IteratorList in Expr
+
+CaseList :: Case
+CaseList :: Case ;
+CaseList :: Case ; CaseList
+
+Case :: case Expr -> Expr
+Case :: match BasePatternList -> Expr
+Case :: match BasePatternList GuardList
+Case :: else Expr
+Case :: default Expr
+
+Pattern :: id
+
+Pattern :: integer
+Pattern :: real
+Pattern :: string
+Pattern :: character
+
+Pattern :: true
+Pattern :: false
+
+Pattern :: cons
+Pattern :: null
+Pattern :: nullptr
+
+Pattern :: id BasePatternList
+Pattern :: cons BasePatternList
+
+BasePatternList :: BasePattern
+BasePatternList :: BasePattern BasePatternList
+
+BasePattern :: .
+BasePattern :: id
+BasePattern :: . [ Type ]
+BasePattern :: id [ Type ]
+
+BasePattern :: ( )
+BasePattern :: ( Pattern )
+BasePattern :: ( BasePattern , SubPatternList )
+
+SubPatternList :: BasePattern
+SubPatternList :: BasePattern , SubPatternList
+
+IteratorList :: Iterator
+IteratorList :: Iterator , IteratorList
+
+Iterator :: NameList : Expr IteratorGuard
+Iterator :: NameList : Expr -> Expr IteratorGuard
+Iterator :: NameList : Expr -> Expr by Expr IteratorGuard
+Iterator :: NameList : Expr ; Expr ; Expr IteratorGuard
+
+Iterator :: NameList = Expr IteratorGuard
+
+IteratorGuard ::
+IteratorGuard :: when Expr
+
+Block ::
+Block :: Statement Block
+
+Statement :: ;
+
+Statement :: [ id ] Statement
+
+Statement :: { Block }
+
+Statement :: let DeclarationList ;
+Statement :: var DeclarationList ;
+
+Statement :: fn id BasePatternList Body ;
+Statement :: fn [ Type ] id BasePatternList Body ;
+
+Statement :: fn id BasePatternList { Block }
+Statement :: fn [ Type ] id BasePatternList { Block }
+
+Statement :: Expr1 ;
+
+Statement :: Expr0 = Expr ;
+Statement :: Expr0 += Expr ;
+Statement :: Expr0 -= Expr ;
+Statement :: Expr0 *= Expr ;
+Statement :: Expr0 /= Expr ;
+
+Statement :: ++ Expr0 ;
+Statement :: -- Expr0 ;
+
+Statement :: Expr0 ++ ;
+Statement :: Expr0 -- ;
+
+Statement :: % Expr2 = Expr ;
+Statement :: % Expr2 += Expr ;
+Statement :: % Expr2 -= Expr ;
+Statement :: % Expr2 *= Expr ;
+Statement :: % Expr2 /= Expr ;
+
+Statement :: ++ % Expr2 ;
+Statement :: -- % Expr2 ;
+
+Statement :: % Expr2 ++ ;
+Statement :: % Expr2 -- ;
+
+Statement :: Expr3 ~ Expr2 = Expr ;
+Statement :: Expr3 ~ Expr2 += Expr ;
+Statement :: Expr3 ~ Expr2 -= Expr ;
+Statement :: Expr3 ~ Expr2 *= Expr ;
+Statement :: Expr3 ~ Expr2 /= Expr ;
+
+Statement :: ++ Expr3 ~ Expr2 ;
+Statement :: -- Expr3 ~ Expr2 ;
+
+Statement :: Expr3 ~ Expr2 ++ ;
+Statement :: Expr3 ~ Expr2 -- ;
+
+|Statement :: if Expr then Statement else Statement
+
+Statement :: if Expr then Statement
+Statement :: else Statement
+
+Statement :: select Expr { CaseBlock }
+
+Statement :: for IteratorList do Statement
+
+Statement :: while Expr do Statement
+Statement :: do Statement while Expr ;
+
+Statement :: break ;
+Statement :: break id ;
+
+Statement :: continue ;
+Statement :: continue id ;
+
+Statement :: return ;
+Statement :: return Expr ;
+
+Statement :: delete Expr ;
+
+CaseBlock ::
+CaseBlock :: CaseStatement CaseBlock
+
+CaseStatement :: Statement
+CaseStatement :: [ case Expr ]
+CaseStatement :: [ match BasePatternList ]
+CaseStatement :: [ else ]
+CaseStatement :: [ default ]

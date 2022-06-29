@@ -1,0 +1,47 @@
+# Luna's Form - v2.
+
+Luna's form is a simplified form of continuation passing style that, while removing the notion of passing
+continuations into functions, the idea of explicit continuation is preserved by the continue-to operator.
+
+## Continue-to.
+
+Every computation must be immediately followed by a continue-to operator. The left hand side of the continue-to is a
+computation to be performed (calling a function, performing a primitive operation, etc.) and the right hand side is a
+function. The continue-to operator performs the computation on the left side, then passed the result into the function
+on the right hand side. The result of the function is returned as the result of the whole operation.
+
+All forms of computation, including function application, primitive operators, and conditional operations must be
+performed with a continue-to.
+
+Continue-to is analagous to the monadic 'bind' operator.
+
+## Syntax.
+
+<base-value> ::=
+    |   <prim>
+    |   <var>
+    |   ( λ <var> . <expr> )
+    |   ( λ ( <var> ) <var> . <expr> )
+
+<expr> ::=
+    |   K <base-value>
+    |   <operation> >>= <base-value>
+
+<operation> ::=
+    |   ( <base-value> )                            -- Identity.
+    |   ( <base-value> , ... , <base-value> )       -- Tuple Constructor.
+    |
+    |   ( <base-value> <base-value> )               -- Function Application
+    |
+    |   ( - <base-value> )                          -- Primitive Operator (Negation)
+    |   ( not <base-value> )                        -- Primitive Operator (Logical Not)
+    |   ...
+    |
+    |   ( <base-value> + <base-value> )             -- Primitive Operator (Addition)
+    |   ( <base-value> - <base-value> )             -- Primitive Operator (Subtract)
+    |   ( <base-value> * <base-value> )             -- Primitive Operator (Multiplication)
+    |   ( <base-value> / <base-value> )             -- Primitive Operator (Division)
+    |   ( <base-value> mod <base-value> )           -- Primitive Operator (Modulo)
+    |   ...
+    |
+    |   ( if <base-value> ? <expr> : <expr> )       -- Conditional Operator*

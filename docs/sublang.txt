@@ -1,0 +1,350 @@
+
+# Sublang
+
+    Sublang is the intermediate representation of the lili progrgramming language. It maps directly to the abstract
+syntax tree used by the lili compiler. More abstractly, it also is a broad representation of the language features of
+the lili programming language.
+
+    It the job of the precompiler to translate standard lili program code into its sublang representation. Since the
+precompiler is designed to do so programatically (rather than a hard-coded solution), the lili compiler can be easily
+modified to compile any programming language whose broad language features are sufficiently close to that of lili's by
+swapping the lili language file for a new one.
+
+    Sublynx is not a programming language; it does not have the same type of syntactical or semantic definitions of
+a normal programming language. Thus the form described here is not a textual representation, but an abstract one.
+
+## Elements of Sublang
+
+    Sublang is built up of different 'Elements'. The first kind of element is the string element. A string element is
+exactly what it sounds like, a string. String elements are used specifically to represent identifiers (variable names
+for example), package paths, a list of identifiers or package paths, or literal value strings (integer, floating point
+or string literals).
+
+    The second kind of element is the component element. Component elements are what make up the structure of a sublang
+program. The different component type can be thought of as the variable symbols of the sublang syntax, and the forms
+of each component as the derivations.
+
+    The third and final kind of element is a list element. A list element is a list of zero or more elements each of
+the same type (string, component or nested list).
+
+### String Elements
+
+    The usage of string elements in sublynx is limited to only a small number of uses: identifiers and lists of
+identifiers, package pathnames and lists of package pathnames, and literal value strings.
+
+    |   id          -   A valid lynx identifier.
+    |   idlist      -   A comma-separated list of identifiers.
+    |   pathname    -   A package pathname; a list of dot-separated identifiers.
+    |   pathlist    -   A comma-separated list of package pathnames.
+    |   literal     -   A literal-value string, to be described later.
+
+    A valid lynx identifier must not begin with a numerical digit (0-9), and must not contain any control characters,
+any whitespace characters, or any special characters used by lynx language, such as '.' ',' and '%' for example.
+
+    A literal string is used to represent a literal value. There are four kinds if literal value string: numerical
+literal, named literal, string literal and character literal.
+
+    Numerical literal value strings must begin with a digit (0-9) and represent numerical values, either integer or
+floating point, in either decimal, binary, hexadecimal or exponential form.
+
+    A named literal represents a specific singal value, such as true or false. Named literal values are represent by
+the name of the literal. The named literal values are: 'true' 'false' 'null' 'void' and 'default'.
+
+    A string literal begins with an '@' symbol and the remainder of the string is the string value
+to be represented.
+
+    A character literal begins with a '#' symbol and the remainder of the string is the character value to be
+represented
+
+### Component elements
+
+    Components elements behave much like algebraic datatypes found in many functional languages. For each type
+of component, there are a number of forms that each component can take. Each form begins with constant string denoting
+which form, called the component's head, and is followed by zero or more sub elements. The number and type of the sub
+elements (Be they string elements, nested component elements or list elements) is determined by the specific form the
+component takes.
+
+    Component head strings are unique among forms of the same component type (though not nessesarily unique among forms
+of different component types). Further, the number and type of sub elements is always the same given a certain form. In
+this way, the syntax of sublang is fully predictive.
+
+### List Elements
+
+    List components begin with a '(' String, followed by some number of elements, each of the same type, followed by
+a ')' String.
+
+## Component Syntax
+
+The Component grammar describes the different forms that a component can take. There is a one-to-one correspondence
+between a production rule and a form the component can take. Furthermore, each production starts with a unique symbol,
+the component head. Thus the grammar is fully predictive.
+
+
+# -------------------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------------------------------------------- #
+
+### Program.
+
+<program> ::=
+    |   LILI ( <definition> )
+
+### Declaration + Binding Components.
+
+<decl> ::=
+    |   D id <type>
+
+<binding> ::=
+    |   B ( <decl> ) <expr>
+
+### Type Component.
+
+<type> ::=
+    |   INT
+    |   CHAR
+    |   SHORT
+    |   LONG
+    |   UINT
+    |   UCHAR
+    |   USHORT
+    |   ULONG
+    |   FLOAT
+    |   DOUBLE
+    |   BOOL
+    |   VOID
+    |
+    |   X
+    |
+    |   LIST <type>
+    |
+    |   ARRAY <type>
+    |   CONSTARRAY <type>
+    |
+    |   PTR <type>
+    |   CONSTPTR <type>
+    |
+    |   NAME pathname
+    |
+    |   TYAPP <type> <type>
+    |
+    |   TUP ( <type> )
+    |   STRUCT ( <decl> )
+    |
+    |   FUNC <type> <type>
+    |
+    |   POLY ( id ) <type>
+
+
+### Expression Components.
+
+<expr> ::=
+    |   VAL value
+    |   LOAD pathname
+    |
+    |   FIELD <expr> index
+    |   PROPERTY <expr> name
+    |   TYPE <expr> ( <type> )
+    |
+    |   TUP ( <expr> )
+    |
+    |   LIST ( <element> )
+    |   GEN ( <generator> ) <expr>
+    |
+    |   NEW <type> <expr>
+    |   NEWARRAY <type> <expr>
+    |
+    |   APP <expr> <expr>
+    |
+    |   NEG <expr>
+    |   NOT <expr>
+    |   CMPL <expr>
+    |   LEN <expr>
+    |   COPY <expr>
+    |   GET <expr>
+    |
+    |   INDEX <expr> <expr>
+    |
+    |   ADD <expr> <expr>
+    |   SUB <expr> <expr>
+    |   MULT <expr> <expr>
+    |   DIV <expr> <expr>
+    |   MOD <expr> <expr>
+    |
+    |   APPEND <expr> <expr>
+    |   TIMES <expr> <expr>
+    |   DSUB <expr> <expr>
+    |   DDIV <expr> <expr>
+    |
+    |   EQ <expr> <expr>
+    |   NEQ <expr> <expr>
+    |   EQUALS <expr> <expr>
+    |   LESS <expr> <expr>
+    |   GRT <expr> <expr>
+    |   LESSEQ <expr> <expr>
+    |   GRTEQ <expr> <expr>
+    |
+    |   AND <expr> <expr>
+    |   OR <expr> <expr>
+    |
+    |   BAND <expr> <expr>
+    |   BOR <expr> <expr>
+    |   BXOR <expr> <expr>
+    |
+    |   LSHIFT <expr> <expr>
+    |   RSHIFT <expr> <expr>
+    |   URSHIFT <expr> <expr>
+    |
+    |   COND <expr> <expr> <expr>
+    |   SELECT <expr> ( <case> )
+    |
+    |   FN <type> ( <pattern> ) <expr>
+    |   IFN name <type> ( <pattern> ) <expr>
+    |
+    |   LET ( <binding> ) <expr>
+    |   ILET name ( <binding> ) <expr>
+
+### Element + Generator Components.
+
+<element> ::=
+    |   E <expr>
+    |   RANGE <expr> <expr>
+    |   INCRANGE <expr> <expr>
+    |   RANGEBY <expr> <expr> <expr>
+    |   INCRANGEBY <expr> <expr> <expr>
+
+<generator> ::=
+    |   EACH ( <decl> ) <expr>
+    |   EACHWHEN ( <decl> ) <expr> <expr>
+    |   FOR ( <decl> ) <expr> <expr> <expr>
+    |   FORWHEN ( <decl> ) <expr> <expr> <expr> <expr>
+
+### Case + Pattern Components.
+
+<case> ::=
+    |   CASE <expr> <expr>
+    |   MATCH ( <pattern> ) <expr>
+    |   ELSE <expr>
+    |   DEFAULT <expr>
+
+<pattern>::=
+    |   VAR id
+    |   TYPE id <type>
+    |
+    |   VAL value
+    |   NAME id ( <pattern> )
+    |   CONS ( <pattern> )
+    |
+    |   TUP ( <pattern> )
+    |   LIST ( <pattern> )
+
+### Statement Component.
+
+<statement> ::=
+    |   PASS
+    |   ID id <statement>
+    |   BLOCK ( <statement> )
+    |
+    |   LET ( <binding> )
+    |   VAR ( <binding> )
+    |
+    |   FUNC id <type> ( <pattern> ) <expr>
+    |   PROC id <type> ( <pattern> ) <statement>
+    |
+    |   EVAL <expr>
+    |
+    |   STORE <expr> <expr>
+    |   STOREADDR <expr> <expr>
+    |   STOREINDEX <expr> <expr> <expr>
+    |
+    |   IF <expr> <statement>
+    |   ELSE <expr>
+    |
+    |   SELECT <expr> ( <casestatement> )
+    |
+    |   FOR ( <generator> ) <statement>
+    |
+    |   WHILE <expr> <statement>
+    |   DOWHILE <expr> <statement>
+    |
+    |   BREAK id
+    |   CONTINUE id
+    |
+    |   RETURN <expr>
+
+### Program Components.
+
+<acl> ::=
+    |   PUBLIC
+    |   PRIVATE
+    |   COMMON
+    |   PROTECTED
+    |   COMMONPROTECTED
+
+<defintion> ::=
+    |   GBL pathname                                -- Global package defintions.
+    |
+    |   GET pathname                                -- Get package.
+    |   GETSYM pathname ( id )                      -- Get symbols from package.
+    |   GETALL pathname                             -- Get all symbols from package.
+    |
+    |   PKG <acl> pathname ( <defintion> )          -- Nested package
+    |
+    |   DEFINE <acl> id <type>                      -- Pre-defintion
+    |
+    |   VAL <acl> id <type> <expr>
+    |   CONST <acl> id <type> <expr>
+    |   FUNC <acl> id <type> ( <pattern> ) <expr>
+    |   PROC <acl> id <type> ( <pattern> ) <statement>
+    |
+    |   TYPENAME <acl> id <type>
+    |
+    |   DATATYPE <acl> id ( id ) ( <dataconstructor> )
+    |
+    |   CLASSTYPE <acl> id ( id ) ( <classdefinition> )
+    |   INSTANCE <acl> id ( <pattern> ) <type> ( <instancedefinition>)
+
+<dataconstructor> ::=
+    |   C id ( <type> )
+
+### Class and Instance Components.
+
+<classdefinition> ::=
+    |   PROP id <type>
+    |   OP1 operator <type> <type>
+    |   OP2 operator <type> <type> <type>
+
+<instancedefinition> ::=
+    |   LOCALPROP id <type>
+    |   LOCALOP1 operator <type> <type>
+    |   LOCALOP2 operator <type> <type> <type>
+    |
+    |   VAL id <type> <expr>
+    |   CONST id <type> <expr>
+    |   FUNC id <type> ( <pattern> ) <expr>
+    |   PROC id <type> ( <pattern> ) <statement>
+    |
+    |   OP1FUNC operator <pattern> <expr>
+    |   OP2FUNC operator <pattern> <pattern> <expr>
+    |
+    |   OP1PROC operator <pattern> <statement>
+    |   OP2PROC operator <pattern> <pattern> <statement>
+    |
+    |   LOCALVAL id <type> <expr>
+    |   LOCALCONST id <type> <expr>
+    |   LOCALFUNC id <type> ( <pattern> ) <expr>
+    |   LOCALPROC id <type> ( <pattern> ) <statement>
+    |
+    |   LOCALOP1FUNC operator <pattern> <expr>
+    |   LOCALOP2FUNC operator <pattern> <pattern> <expr>
+    |
+    |   LOCALOP1PROC operator <pattern> <statement>
+    |   LOCALOP2PROC operator <pattern> <pattern> <statement>
+    |
+    |   LET ( <binding> )
+    |   VAR ( <binding> )
+    |
+    |   AUTOLET ( <binding> )
+    |   AUTOVAR ( <binding> )
+    |
+    |   CONS <statement>
+    |   COPY <statement>

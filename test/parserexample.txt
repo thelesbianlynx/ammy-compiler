@@ -1,0 +1,21 @@
+
+
+datatype Action {
+    >Shift: int;
+    >Reduce: Production;
+}
+
+typename State : Map (Symbol, Action);
+
+typename ParseMachine : State const~;
+
+
+[printParseMachine : ParseMachine -> ()]
+fn printParseMachine pm =
+    for id lst: (0, pm); pm != null; (id+1, rest pm) in
+        let state = first pm in
+            for k v: state in
+                select v {
+                    match (Shift s) -> println ("s " ++ id ++ " " ++ k ++ " " ++ s);
+                    match (Reduce p) -> println ("r " ++ id ++ " " ++ k ++ " " ++ p);
+                };
